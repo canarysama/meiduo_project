@@ -4,6 +4,7 @@ var vm = new Vue({
     delimiters: ['[[', ']]'],
     data: {
         host: host,
+        check_uesrname_no:true,
         error_name: false,
         error_password: false,
         error_check_password: false,
@@ -58,12 +59,16 @@ var vm = new Vue({
         // 检查用户名
         check_username: function () {
             var re = /^[a-zA-Z0-9_-]{5,20}$/;
+
             if (re.test(this.username)) {
                 this.error_name = false;
             } else {
                 this.error_name_message = '请输入5-20个字符的用户名';
                 this.error_name = true;
             }
+
+
+
             // 检查重名
             if (this.error_name == false) {
                 var url = this.host + '/usernames/' + this.username + '/count/';
