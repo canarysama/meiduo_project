@@ -141,6 +141,13 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
+    "verify_image_code": { #  # 保存图片验证码--2号库
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"
@@ -193,7 +200,8 @@ logger = logging.getLogger('django')
 # 配置认证User对    子应用  模型类
 AUTH_USER_MODEL = "users.User"
 
-
+# 本地域名
+ALLOWED_HOSTS = ['www.meiduo.site']
 
 # 工据类
 AUTHENTICATION_BACKENDS = ['apps.users.utils.UsernameMobileAuthBackend']

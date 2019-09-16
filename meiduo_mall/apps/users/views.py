@@ -1,13 +1,39 @@
 import re
-from audioop import reverse
 
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-
-# Create your views here.
+from django.urls import reverse
 from django.views import View
 from django.http import HttpResponse, response
 from django import http
+from apps.users.models import User
+from utils.response_code import RETCODE
+
+
+# Create your views here.
+
+#用户名重复检测
+class UsernameCountView(View):
+    def get(self,rquest,username):
+        # 接收参数
+
+
+        #校验
+
+        #业务逻辑判断
+        count = User.objects.filter(username=username).count()
+
+        #返回响应对象
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'count': count})
+
+#手机号重复检测
+class MobileCountView(View):
+    def get(self,request,mobile):
+        count = User.objects.filter(mobile=mobile).count()
+
+        return http.JsonResponse({'count': count})
+
+
 
 class RegisterView(View):
     def get(self, request):
@@ -50,13 +76,21 @@ class RegisterView(View):
 
 
         # 3.注册
+        user = User.objects.create_user(username=username,password=password,mobile=mobile)
 
 
         # 3.保持登录状态
+        login(request,user)
 
 
         # 4.重定向
-        return redirect('/')
+        return redirect(reverse("contents:index"))
+        # return HttpResponse("首页")
+
+
+
+
+
 
 
 class LoginView(View):

@@ -4,10 +4,9 @@ from django.shortcuts import render
 from django.views import View
 
 
-class indexView(View):
+class IndexView(View):
 
 
-    # def get(self,request):
-    #     pass
-    #     # return render(request, 'index.html')
-    pass
+    def get(self,request):
+
+        return render(request, 'index.html')
