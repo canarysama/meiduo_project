@@ -13,8 +13,19 @@ urlpatterns = [
 
     url(r'login/$',views.LoginView.as_view(),name='login'),
 
-    url(r'logout/',views.LogoutView.as_view(),name='login'),
+    url(r'logout/',views.LogoutView.as_view(),name='logout'),
 
-    url(r'userinfo/',views.UserInfoView.as_view(),name='userinfo'),
+    url(r'info/',views.UserInfoView.as_view(),name='userinfo'),
+
+    url(r'emails/',views.EmailView.as_view(),name='email'),
+
+
+    url(r'address/',views.AddressView.as_view(),name='address'),
+
+
+    url(r'address/create/',views.AddressAddView.as_view(),name='addressadd'),
+
+    url(r'password',views.ChangPwdAddView.as_view()),
+
 
 ]

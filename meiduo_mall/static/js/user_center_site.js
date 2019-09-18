@@ -48,6 +48,7 @@ var vm = new Vue({
                     responseType: 'json'
                 })
                     .then(response => {
+
                         if (response.data.code == '0') {
                             this.cities = response.data.sub_data.subs;
                         } else {

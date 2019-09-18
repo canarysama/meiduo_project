@@ -39,13 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.users',
     'apps.contents',
+    'apps.verifications',
+    'apps.areas',
+    'apps.goods',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -199,6 +202,7 @@ logger = logging.getLogger('django')
 
 # 配置认证User对    子应用  模型类
 AUTH_USER_MODEL = "users.User"
+
 
 # 本地域名
 ALLOWED_HOSTS = ['www.meiduo.site']
