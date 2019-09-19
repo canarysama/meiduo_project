@@ -91,11 +91,18 @@ class AreasView(View):
         Area.objects.filter(parent_id=220300)
 
         """
+
+
         # 1.接收参数
         area_id = request.GET.get('area_id')
 
         # 2.判断  是省份  还是 市  和  区县
         if not area_id:
+
+            #缓存
+            province_list = cache.get('province_list')
+
+
             provinces = Area.objects.filter(parent_id__isnull=True)
             print(type(provinces))
             province_list = []
@@ -104,27 +111,36 @@ class AreasView(View):
                     "id":pro.id,
                     "name":pro.name
                 })
+
+            cache.set('province_list',province_list,3600)
+
             return JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'province_list': province_list})
 
         else:
-            parent_model = Area.objects.get(id=area_id)
-            cities = Area.objects.filter(parent_id = area_id)
+            sub_data = cache.get('sub_data_%s'% area_id)
+            if not sub_data:
+                parent_model = Area.objects.get(id=area_id)
+                cities = Area.objects.filter(parent_id = area_id)
 
-            subs_list = []
-            for city in cities:
+                subs_list = []
+                for city in cities:
 
-                subs_list.append({
-                    'id':city.id,
-                    'name':city.name
+                    subs_list.append({
+                        'id':city.id,
+                        'name':city.name
 
-                })
+                    })
 
-            sub_data={
-                'id':parent_model.id,
-                'name':parent_model.name,
-                'subs':subs_list
+                sub_data={
+                    'id':parent_model.id,
 
-            }
+                    'name':parent_model.name,
+                    'subs':subs_list
+
+                }
+                cache.set('sub_data_%s'% area_id,sub_data,3600)
+                print(parent_model.id)
+                print(parent_model.name)
             return JsonResponse({'code': RETCODE.OK, 'sub_data': sub_data})
 
 
