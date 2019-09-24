@@ -3,18 +3,63 @@ import re
 
 from django.contrib.auth import authenticate, login, logout
 # from django.http import JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django.http import HttpResponse, response
 from django import http
+from django_redis import get_redis_connection
 
+from apps.goods.models import SKU
 from apps.users.models import User, Address
 from utils.response_code import RETCODE
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
+
+class BrowseHistoriesView(View):
+
+    def post(self,request):
+        sku_id = json.loads(request.body.decode())['sku_id']
+
+        try:
+            sku = SKU.objects.get(id = sku_id)
+        except:
+            return http.HttpResponseForbidden('商品不存在')
+        client = get_redis_connection('history')
+        redis_key = 'history_%d' % request.user.id
+
+        client.lrem(redis_key,0,sku_id)
+        client.lpush(redis_key,sku_id)
+
+        client.ltrim(redis_key,0,4)
+
+        return JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+
+    def get(self,request):
+        client = get_redis_connection('history')
+
+        sku_ids = client.lrange('history_%d'%request.user.id,0,-1)
+
+        # for sku_id in sku_ids:
+        #     sku =SKU.objects.filter(id__in = sku_ids)
+        #
+        sku_list =[]
+        for sku_id in sku_ids:
+            sku = SKU.objects.get(id=sku_id)
+            sku_list.append({
+
+                'id':sku.id,
+                'name':sku.name,
+                'price':sku.price,
+                'default_image_url':sku.default_image.url
+            })
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'skus': sku_list})
+
+
 #修改密码
 class ChangPwdAddView(LoginRequiredMixin,View):
     def get(self,request):
@@ -251,9 +296,9 @@ class LoginView(View):
         username = request.POST.get('username')
         password = request.POST.get('password')
         remembered = request.POST.get('remembered')
-        print("-----",username)
+        # print("-----",username)
         user = authenticate(username=username, password=password)
-        print("----",username)
+        # print("----",username)
 
         if user is None:
             return render(request, 'login.html', {'account_errmsg': '用户名或密码错误'})
@@ -272,9 +317,13 @@ class LoginView(View):
             request.session.set_expiry(None)
 
         # 6.返回响应结果
-        re =  redirect(reverse('contents:index'))
-        re.set_cookie('username', user.username, max_age=3600 * 24 * 15)
-        return re
+        response =  redirect(reverse('contents:index'))
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
+        from apps.carts.utils import merge_cart_cookie_to_redis
+        merge_cart_cookie_to_redis(request=request, response=response)
+
+        return response
 
 class LogoutView(View):
         """退出登录"""

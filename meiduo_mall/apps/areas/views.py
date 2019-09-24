@@ -104,7 +104,7 @@ class AreasView(View):
 
 
             provinces = Area.objects.filter(parent_id__isnull=True)
-            print(type(provinces))
+            # print(type(provinces))
             province_list = []
             for pro in provinces:
                 province_list.append({
@@ -139,8 +139,8 @@ class AreasView(View):
 
                 }
                 cache.set('sub_data_%s'% area_id,sub_data,3600)
-                print(parent_model.id)
-                print(parent_model.name)
+                # print(parent_model.id)
+                # print(parent_model.name)
             return JsonResponse({'code': RETCODE.OK, 'sub_data': sub_data})
 
 

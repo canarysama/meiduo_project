@@ -23,9 +23,12 @@ urlpatterns = [
     url(r'^address/$',views.AddressView.as_view(),name='address'),
 
 
-    url(r'^addresses/create/$',views.AddressAddView.as_view()),
+    url(r'^addresses/create/$',views.AddressAddView.as_view(),name='addressadd'),
 
     url(r'^password$',views.ChangPwdAddView.as_view()),
+
+
+    url(r'^browse_histories/$',views.BrowseHistoriesView.as_view()),
 
 
 ]
