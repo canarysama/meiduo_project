@@ -25,10 +25,24 @@ urlpatterns = [
 
     url(r'^addresses/create/$',views.AddressAddView.as_view(),name='addressadd'),
 
-    url(r'^password$',views.ChangPwdAddView.as_view()),
+    url(r'^password/$',views.ChangPwdAddView.as_view()),
 
 
     url(r'^browse_histories/$',views.BrowseHistoriesView.as_view()),
+
+    url(r'^find_password/$',views.FindPasswordView.as_view()),
+
+    url(r'^accounts/(?P<username>[a-zA-Z0-9_-]{5,20})/sms/token/$',views.PasswordOneView.as_view()),
+
+    url(r'^find_password_sms_codes/(?P<mobile>1[3-9]\d{9})/$',views.PasswordTwoView.as_view()),
+
+    url(r'^users/(?P<user_id>\d+)/new_password/$',views.PasswordThreeView.as_view()),
+
+
+    url(r'^accounts/(?P<mobile>[a-zA-Z0-9_-]{5,20})/password/token/$',views.SmsView.as_view(),),
+
+
+
 
 
 ]

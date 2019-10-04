@@ -39,7 +39,7 @@ class SMSCodeView(View):
 
         image_client = get_redis_connection('verify_image_code')
         redis_img_code = image_client.get('img_%s'%uuid)
-
+        print(redis_img_code)
         if not redis_img_code:
             return http.JsonResponse({'code':"4001",'errmsg':"验证码失效了"})
 
@@ -48,10 +48,17 @@ class SMSCodeView(View):
         if image_code != redis_img_code.decode().lower():
             return http.JsonResponse({'code':"4001",'errmsg':"验证有误"})
 
-        #对比图形验证码
+        from random import randint
 
+        from random import randint
+        sms_code = '%06d' %randint(0,999999)
+        sms_redis_client = get_redis_connection("sms_code")
+        sms_redis_client.setex('sms_%s'%mobile,300,sms_code)
 
+        # from libs.yuntongxun.sms import CCP
+        # CCP().send_template_sms(mobile, [sms_code, 5], 1)
 
+        print(sms_code)
 
 
         return http.JsonResponse({'code':'0','errmsg':'发送成功'})

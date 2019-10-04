@@ -1,4 +1,6 @@
+import base64
 import json
+import os
 import re
 
 from django.contrib.auth import authenticate, login, logout
@@ -13,11 +15,135 @@ from django_redis import get_redis_connection
 
 from apps.goods.models import SKU
 from apps.users.models import User, Address
+from apps.verifications import constants
 from utils.response_code import RETCODE
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
+
+# 忘记密码
+from utils.secret import SecretOauth
+
+
+class FindPasswordView(View):
+    def get(self,request):
+        return render(request,'find_password.html')
+
+class PasswordOneView(View):
+    def get(self, request, username):
+
+        image_code = request.GET.get('image_code')
+        image_code_id = request.GET.get('image_code_id')
+
+        image_client = get_redis_connection('verify_image_code')
+
+        image_code_data = image_client.get("img_%s"%image_code_id)
+
+        # print(image_code.lower())
+        # print(image_code_data.decode().lower())
+
+        token_str = bytes.decode(base64.b64encode(os.urandom(48)))
+
+
+        try:
+            user = User.objects.get(username=username)
+            mobile = user.mobile
+
+            if image_code.lower() == image_code_data.decode().lower():
+
+                image_client.setex('token_%s'% mobile,constants.IMAGE_CODE_REDIS_EXPIRES,token_str)
+
+                from utils.secret import SecretOauth
+                token_str_go = SecretOauth().dumps(token_str)
+
+                return http.JsonResponse({"status": 5000, "mobile": mobile, "access_token": token_str_go})
+            else:
+                return http.JsonResponse({"status": 5001,})
+
+        except:
+            #5004 用户名或手机号不存在
+            return http.JsonResponse({"status": 5004,})
+
+class PasswordTwoView(View):
+     def get(self,request,mobile):
+
+
+        access_token = SecretOauth().loads(request.GET.get('access_token'))
+
+        redis_client  =  get_redis_connection('verify_image_code')
+
+        access_token_redis = redis_client.get('token_%s'% mobile).decode()
+        # loads_acces_token = SecretOauth().loads(access_token)
+
+        if access_token == access_token_redis:
+
+
+            return http.JsonResponse({"status": 5000,'message': "短信发送成功!"} )
+
+        else:
+
+            return http.JsonResponse({"status": 5001,'message': "token有误"})
+
+
+class SmsView(View):
+    def get(self,request,mobile):
+
+        one_sms_code = request.GET.get('sms_code')
+
+        user = User.objects.get(mobile=mobile)
+
+        token_data = get_redis_connection('verify_image_code')
+
+        token_str = token_data.get('token_%s'% mobile).decode()
+
+        from random import randint
+        sms_code = '06%d'%randint(0,999999)
+        sms_code_redis = get_redis_connection('sms_code')
+        sms_code_redis.setex('sms_%s' % mobile, 300, sms_code)
+        redis_sms = sms_code_redis.get('sms_%s'%mobile)
+        print(sms_code)
+
+        if one_sms_code != redis_sms.decode():
+            return http.JsonResponse({
+                "status": 5001,})
+        return http.JsonResponse({
+            "status": 5000,
+            "user_id": user.id,
+            "access_token":token_str})
+
+
+
+class PasswordThreeView(View):
+
+
+
+    def post(self,request,user_id ):
+        user_dict = request.body.decode()
+
+        try:
+            user = User.objects.get(id=user_id)
+            mobile = user.mobile
+        except:
+            return http.JsonResponse({  "status": 5002, 'message': "user_id有误!" })
+        token_data = get_redis_connection('verify_image_code')
+        token_str = token_data.get('token_%s'% mobile)
+        user_dict = eval(user_dict)
+
+        if user_dict['access_token'] == token_str.decode():
+            if user_dict['password'] == user_dict['password2']:
+
+                password2 = user_dict['password2']
+                print(password2)
+
+                user.set_password(password2)
+                user.save()
+
+
+                return http.JsonResponse({"status": 5000, 'message': "成功!"})
+
+        else:
+            return http.JsonResponse({"status": 5001, 'message': "token有误!"})
 
 class BrowseHistoriesView(View):
 
@@ -58,7 +184,6 @@ class BrowseHistoriesView(View):
             })
 
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'skus': sku_list})
-
 
 #修改密码
 class ChangPwdAddView(LoginRequiredMixin,View):
@@ -225,8 +350,6 @@ class MobileCountView(View):
 
         return http.JsonResponse({'count': count})
 
-
-
 class RegisterView(View):
     def get(self, request):
         """
@@ -245,6 +368,7 @@ class RegisterView(View):
         password = request.POST.get('password')
         password2 = request.POST.get('password2')
         mobile = request.POST.get('mobile')
+        sms_code = request.POST.get('msg_code')
 
         allow = request.POST.get('allow')
 
@@ -268,22 +392,19 @@ class RegisterView(View):
 
 
         # 3.注册
-        user = User.objects.create_user(username=username,password=password,mobile=mobile)
-
+        user = User.objects.create_user(username=username,password=password,mobile=mobile),
 
         # 3.保持登录状态
         login(request,user)
+        response = redirect(reverse("contents:index"))
+        response.set_cookie('username',username,max_age=3600 * 24 * 15)
 
-
-        # 4.重定向
-        return redirect(reverse("contents:index"))
+        sms_code_redis = get_redis_connection('sms_code')
+        x_sms_code = sms_code_redis.get('sms_%s'%mobile)
+        if x_sms_code != sms_code:
+            return render(request, 'register.html', {'sms_code_errmsg': '输入短信验证码有误'})
+        return response
         # return HttpResponse("首页")
-
-
-
-
-
-
 
 class LoginView(View):
     def get(self,request):

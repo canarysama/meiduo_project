@@ -287,14 +287,14 @@ class CartsSimpleView(View):
             redis_client = get_redis_connection('carts')
 
             carts_data = redis_client.hgetall(request.user.id)
-
+            user = request.user.id
             # for key,value in carts_data.itams():
             #
             #     key = int(key.decode())
             #     value = json.loads(value.decode())
             #     carts_dict[key] = value
             #
-            cart_dict = {int(key.decode()): json.loads(value.decode()) for key,value in carts_data.items()}
+            carts_dict = {int(key.decode()): json.loads(value.decode()) for key,value in carts_data.items()}
 
         else:
             cookie_str = request.COOKIES.get('carts')
@@ -303,18 +303,18 @@ class CartsSimpleView(View):
                 carts_dict = CookieSecret.loads(cookie_str)
             else:
                 carts_dict = {}
-            skus = SKU.objects.filter(id__in = carts_dict.keys())
+        skus = SKU.objects.filter(id__in = carts_dict.keys())
 
-            skus_list = []
+        skus_list = []
 
-            for sku in skus:
-                skus_list.append({
-                    'id': sku.id,
-                    'name': sku.name,
-                    'count': carts_dict.get(sku.id).get('count'),
-                    'default_image_url': sku.default_image.url
+        for sku in skus:
+            skus_list.append({
+                'id': sku.id,
+                'name': sku.name,
+                'count': carts_dict.get(sku.id).get('count'),
+                'default_image_url': sku.default_image.url,
 
 
 
-                })
-            return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'cart_skus': cart_skus})
+            })
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'cart_skus': skus_list})

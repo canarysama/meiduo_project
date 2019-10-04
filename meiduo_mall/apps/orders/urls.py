@@ -11,5 +11,7 @@ urlpatterns = [
 
     url(r'^orders/success/$', views.OrderSuccessView.as_view()),
 
+    url(r'^orders/info/(?P<page_num>\d+)/$', views.OrderShowView.as_view(),name='order_all'),
+#                      (?P<mobile>[a-zA-Z0-9_-]{5,20})
 
 ]

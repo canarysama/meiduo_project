@@ -35,4 +35,7 @@ urlpatterns = [
 
     url(r'^', include('apps.orders.urls',namespace='orders')),
 
+
+    url(r'^', include('apps.payment.urls',namespace='payment')),
+
 ]

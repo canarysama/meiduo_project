@@ -43,8 +43,8 @@ class OrderInfo(BaseModel):
         verbose_name = '订单基本信息'
         verbose_name_plural = verbose_name
 
-    def __str__(self):
-        return self.order_id
+    # def __str__(self):
+    #     return self.order_id
 
 
 class OrderGoods(BaseModel):
@@ -71,5 +71,5 @@ class OrderGoods(BaseModel):
         verbose_name = '订单商品'
         verbose_name_plural = verbose_name
 
-    def __str__(self):
-        return self.sku.name
+    # def __str__(self):
+    #     return self.sku.name
