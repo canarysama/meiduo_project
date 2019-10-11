@@ -25,6 +25,8 @@ urlpatterns = [
 
     url(r'^', include('apps.verifications.urls')),
 
+    url(r'^', include('apps.oauth.urls')),
+
     url(r'^', include('apps.areas.urls')),
 
     url(r'^', include('apps.goods.urls',namespace='goods')),

@@ -218,18 +218,32 @@ class OrderShowView(LoginRequiredMixin,View):
 
         page_orders = {}
 
+
+        # 所有订单号的列表
+        order_list = []
+        order_id_count = goods_data.values('order_id', 'count')
+        order_id_set = set()
+        for order_data_co in order_id_count:
+            a = order_data_co['order_id']
+            order_list.append(a)
+        order_list =list(set(order_list))
+
+
+
+
+
         for order_id in order_ids:
 
             order_id = order_id['order_id']  # 订单号
             time_old = order_data.filter(order_id=order_id).values('create_time')    #  时间
             time = str(time_old[0]['create_time'])
-            print(goods_data.values())
+
             time_new = time[0:16] # 时间
             freight = time_old.values('freight')[0]['freight'] # 运费
 
 
             """<QuerySet [{'address_id': 1, 'user_id': 19, 'total_count': 1,
-            'order_id': '20190927003440000000019',
+             'order_id': '20190927003440000000019',
              'status': 1, 'pay_method': 2,
              'create_time': datetime.datetime(2019, 9, 27, 0, 34, 40, 214624, tzinfo=<UTC>),
              'update_time': datetime.datetime(2019, 9, 27, 0, 34, 40, 235034, tzinfo=<UTC>),

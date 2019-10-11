@@ -2,9 +2,7 @@ from django import views
 from django.conf.urls import url, include
 from django.contrib import admin
 from apps.carts import views
-urlpatterns = [
-
-
+urlpatterns=[
 
     url('^carts/$', views.CartsView.as_view(),name='carts'),
 

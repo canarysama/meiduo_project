@@ -45,9 +45,12 @@ INSTALLED_APPS = [
     'apps.carts',
     'apps.orders',
     'apps.payment',
+    'apps.oauth',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -243,7 +246,7 @@ LOGIN_URL = '/login/'
 DEFAULT_FILE_STORAGE = 'utils.fastdfs.fastdfs_storage.FastDFSStorage'
 
 # FastDFS相关参数
-FDFS_BASE_URL = 'http://192.168.30.128:8888/'
+FDFS_BASE_URL = 'http://192.168.74.128:8888/'
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 
 
@@ -251,3 +254,9 @@ ALIPAY_APPID = '2016101200670918'
 ALIPAY_DEBUG = True
 ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
 ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
+
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8080',
+
+)
+CORS_ALLOW_CREDENTIALS = True

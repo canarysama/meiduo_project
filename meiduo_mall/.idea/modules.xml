@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/meiduo_mall.iml" filepath="$PROJECT_DIR$/.idea/meiduo_mall.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../meiduo_admin/meiduo_mall_admin/.idea/meiduo_mall_admin.iml" filepath="$PROJECT_DIR$/../../meiduo_admin/meiduo_mall_admin/.idea/meiduo_mall_admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../序列化/xvliehua/.idea/xvliehua.iml" filepath="$PROJECT_DIR$/../../序列化/xvliehua/.idea/xvliehua.iml" />
     </modules>
   </component>
 </project>
