@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.payment',
     'apps.oauth',
     'corsheaders',
+    'apps.meiduo_admin',
 ]
 
 MIDDLEWARE = [
