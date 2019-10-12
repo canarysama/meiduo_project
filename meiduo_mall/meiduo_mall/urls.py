@@ -40,6 +40,6 @@ urlpatterns = [
 
     url(r'^', include('apps.payment.urls',namespace='payment')),
 
-    url(r'^meiduo_admin', include('apps.meiduo_admin.urls')),
+    url(r'^meiduo_admin/', include('apps.meiduo_admin.urls')),
 
 ]

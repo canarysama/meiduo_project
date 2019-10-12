@@ -418,7 +418,7 @@ class LoginView(View):
         password = request.POST.get('password')
         remembered = request.POST.get('remembered')
         # print("-----",username)
-        user = authenticate(username=username, password=password)
+        user = authenticate(request,username=username, password=password)
         # print("----",username)
 
         if user is None:
