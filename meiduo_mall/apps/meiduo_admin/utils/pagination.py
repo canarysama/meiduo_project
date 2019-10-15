@@ -11,6 +11,7 @@ class Meiduopagination(PageNumberPagination):
     def get_paginated_response(self, data):
         return Response(
             {
+
                 "counts": self.page.paginator.count,
 
                 "lists": data,

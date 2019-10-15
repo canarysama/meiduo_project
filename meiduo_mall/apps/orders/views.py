@@ -227,7 +227,7 @@ class OrderShowView(LoginRequiredMixin,View):
             a = order_data_co['order_id']
             order_list.append(a)
         order_list =list(set(order_list))
-
+        print(order_list)
 
 
 

@@ -76,6 +76,7 @@ class PasswordTwoView(View):
         access_token_redis = redis_client.get('token_%s'% mobile).decode()
         # loads_acces_token = SecretOauth().loads(access_token)
 
+
         if access_token == access_token_redis:
 
 

@@ -58,7 +58,7 @@ class UsernameMobileAuthBackend(ModelBackend):
             user = get_user_by_account(username)
 
             if not user.check_password(password):
-                user=None
+                return None
 
 
             return user

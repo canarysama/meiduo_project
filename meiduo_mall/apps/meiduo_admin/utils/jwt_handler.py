@@ -18,4 +18,3 @@ def meiduo_payload_handler(user):
     payload['mobile'] = user.mobile
 
     return payload
-
