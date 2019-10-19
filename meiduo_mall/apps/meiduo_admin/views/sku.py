@@ -1,7 +1,8 @@
+from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet
 
 from apps.goods.models import SKU
-from apps.meiduo_admin.serializers.sku import SKUGoodsSerializer
+from apps.meiduo_admin.serializers.sku import SKUGoodsSerializer, SKUSIMP
 from apps.meiduo_admin.utils.pagination import Meiduopagination
 
 
@@ -20,3 +21,7 @@ class SKUGoodsView(ModelViewSet):
             return SKU.objects.all()
         else:
             return SKU.objects.filter(name__contains=keyword)
+
+class SKUSIMP(ListAPIView):
+    queryset = SKU.objects.all()
+    serializer_class = SKUSIMP

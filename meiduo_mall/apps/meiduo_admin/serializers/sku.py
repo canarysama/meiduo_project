@@ -97,3 +97,8 @@ class SKUGoodsSerializer(serializers.ModelSerializer):
                 generate_task.delay(instance.id)
 
                 return instance
+
+class SKUSIMP(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+

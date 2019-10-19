@@ -247,8 +247,10 @@ LOGIN_URL = '/login/'
 DEFAULT_FILE_STORAGE = 'utils.fastdfs.fastdfs_storage.FastDFSStorage'
 
 # FastDFS相关参数
-FDFS_BASE_URL = 'http://192.168.74.129:8888/'
+FDFS_BASE_URL = 'http://192.168.74.130:8888/'
+FASTDFS_PATH = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+
 
 
 ALIPAY_APPID = '2016101200670918'
@@ -275,7 +277,4 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'apps.meiduo_admin.utils.jwt_handler.jwt_response_payload_handler',
     'JWT_PAYLOAD_HANDLER': 'apps.meiduo_admin.utils.jwt_handler.meiduo_payload_handler',
-
-
-
 }

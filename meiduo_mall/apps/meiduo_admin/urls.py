@@ -2,8 +2,13 @@ from django.conf.urls import url
 from django.contrib import admin
 from rest_framework_jwt.views import obtain_jwt_token
 
+from apps.meiduo_admin.views.admin_group import GroupView
+from apps.meiduo_admin.views.admin_permission import PermissionView, GroupLIView
 from apps.meiduo_admin.views.category import Cate3View
+from apps.meiduo_admin.views.orders import OrderSet
 from apps.meiduo_admin.views.sku import SKUGoodsView
+from apps.meiduo_admin.views.sku import SKUSIMP
+from apps.meiduo_admin.views.sku_image import ImageViewSet
 from .views import statistical
 from .views import specs
 from .views import spu
@@ -34,6 +39,12 @@ urlpatterns = [
     url(r'^goods/(?P<pk>\d+)/specs/$', specs.SpecOpTIONView.as_view()),
 
     url(r'^skus/categories/$', Cate3View.as_view()),
+
+    url(r'^skus/simple/$', SKUSIMP.as_view()),
+    url(r'^permission/simple/$', GroupLIView.as_view()),
+
+
+
 ]
 
 ro  = SimpleRouter()
@@ -42,5 +53,9 @@ ro.register('goods/specs',specs.SpecViewSet,base_name='specs')
 urlpatterns += ro.urls
 
 router = DefaultRouter()
+router.register('skus/images',ImageViewSet,base_name='images')
 router.register('skus', SKUGoodsView, base_name='skus')
+router.register('orders', OrderSet, base_name='orders')
+router.register('permission/perms', PermissionView, base_name='PermissionView')
+router.register('permission/groups', GroupView, base_name='PermissionView')
 urlpatterns += router.urls

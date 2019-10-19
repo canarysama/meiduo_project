@@ -157,6 +157,6 @@ class HotView(View):
                 'name':sku.name,
                 'price':sku.price,
             })
-
+        pass
         return http.JsonResponse({'code':RETCODE.OK, 'errmsg':'OK', 'hot_skus':hot_skus})
 
